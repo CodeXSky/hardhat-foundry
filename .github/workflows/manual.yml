@@ -1,10 +1,10 @@
-name: Deploy smart contract trigger
+name: Deploy smart contract
 
 on:
   workflow_dispatch:
     inputs:
       blockchainNetwork:
-        description: "Network of blockchain mainnet, testnet, ..."
+        description: "Network of blockchain mainnet, testnet, v..v"
         type: choice
         default: "mumbai"
         options:
@@ -17,7 +17,7 @@ jobs:
   deploy-smartcontract:
     runs-on: ubuntu-latest
     steps:
-      - name: Network deploy smart contract
+      - name: Network deploy smart contract ${{ inputs.blockchainNetwork }}
         run: echo "Network deploy is ${{ inputs.blockchainNetwork }}"
 
       - uses: actions/checkout@v4
@@ -36,4 +36,27 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ALCHEMY_API_KEY_MUMBAI: ${{ secrets.ALCHEMY_API_KEY_MUMBAI }}
           ALCHEMY_API_KEY_SEPOLIA: ${{ secrets.ALCHEMY_API_KEY_SEPOLIA }}
+
         run: yarn ${{inputs.blockchainNetwork}}:deploy
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PAT }}
+          commit-message: "Deploy smart contract on ${{ inputs.blockchainNetwork }} and the day ${{ steps.date.outputs.date }}"
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          branch: deploy.${{ inputs.blockchainNetwork }}.${{ steps.date.outputs.date }}.smartcontract-github-action
+          delete-branch: true
+          title: "[Deploy] Deploy smart contract on ${{ inputs.blockchainNetwork }}"
+          body: |
+            Deploy report on ${{ inputs.blockchainNetwork }}
+            - Updated with history after deploy smart contract
+          labels: |
+            deploy smartcontract
+            ${{ inputs.blockchainNetwork }}
+            automated pr
