@@ -3,14 +3,35 @@ name: Manual trigger
 on:
   workflow_dispatch:
     inputs:
-      name:
-        description: "Who to greet"
-        default: "World"
+      blockchainNetwork:
+        description: "Network of blockchain mainnet, testnet, ..."
+        type: choice
+        default: "mumbai"
+        options:
+          - "mainnet"
+          - "polygon"
+          - "sepolia"
+          - "mumbai"
 
 jobs:
-  hello:
+  deploy-mumbai:
+    if:  ${{ inputs.blockchainNetwork == 'mumbai' }}
     runs-on: ubuntu-latest
-
     steps:
-      - name: Hello Step
-        run: echo "Hello ${{ github.event.inputs.name }}"
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Compile smart contract
+        run: yarn compile
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Deploy smart contract
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          ALCHEMY_API_KEY_MUMBAI: ${{ secrets.PRIVATE_KEY }}
+          ALCHEMY_API_KEY_SEPOLIA: ${{ secrets.PRIVATE_KEY }}
+        run: yarn ${{inputs.blockchainNetwork}}:deploy

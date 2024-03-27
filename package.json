@@ -13,7 +13,9 @@
     "compile": "npx hardhat compile",
     "deploy:local": "npx hardhat run --network localhost scripts/deploy.ts",
     "deploy:sepolia": "npx hardhat run --network sepolia scripts/deploy.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sepolia:deploy": "hardhat --network sepolia deploy",
+    "mumbai:deploy": "hardhat --network mumbai deploy"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",

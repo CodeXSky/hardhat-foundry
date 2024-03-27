@@ -32,6 +32,16 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       chainId: 1337,
     },
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY_SEPOLIA}`,
+      accounts,
+      chainId: 11155111,
+    },
+    mumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY_MUMBAI}`,
+      accounts,
+      chainId: 80001,
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
