@@ -17,6 +17,11 @@ const config: HardhatUserConfig = {
       default: 0,
     },
   },
+  gasReporter: {
+    currency: "USD",
+    enabled: true,
+    excludeContracts: ["contracts/libraries/"],
+  },
   defaultNetwork: "hardhat",
   networks: {
     localhost: {
