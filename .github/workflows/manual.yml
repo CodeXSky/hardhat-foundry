@@ -46,16 +46,15 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PAT }}
           commit-message: "Deploy smart contract on ${{ inputs.blockchainNetwork }} and the day ${{ steps.date.outputs.date }}"
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           branch: deploy.${{ inputs.blockchainNetwork }}.${{ steps.date.outputs.date }}.smartcontract-github-action
           delete-branch: true
-          title: "[Deploy] Deploy smart contract on ${{ inputs.blockchainNetwork }}"
+          title: "[Deploy Smart Contract] Deploy smart contract on ${{ inputs.blockchainNetwork }}"
           body: |
             Deploy report on ${{ inputs.blockchainNetwork }}
-            - Updated with history after deploy smart contract
+            - Updated history after deploy smart contract in deployments folder
           labels: |
             deploy smartcontract
             ${{ inputs.blockchainNetwork }}
