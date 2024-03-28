@@ -62,4 +62,8 @@ contract Token {
   function balanceOf(address account) external view returns (uint256) {
     return balances[account];
   }
+
+  function infoAccount(address account) external view returns (uint256) {
+    return balances[account];
+  }
 }
