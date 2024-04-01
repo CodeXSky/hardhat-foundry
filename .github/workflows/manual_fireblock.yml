@@ -15,7 +15,6 @@ on:
 
 jobs:
   deploy-smartcontract:
-    if: github.actor.role == 'Maintainer'
     runs-on: ubuntu-latest
     steps:
       - name: Network deploy smart contract ${{ inputs.blockchainNetwork }}
