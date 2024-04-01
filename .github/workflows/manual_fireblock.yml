@@ -33,7 +33,7 @@ jobs:
       
       - uses: "finnp/create-file-action@master"
         env:
-          FILE_NAME: "fireblock/fireblocks_secret.key"
+          FILE_NAME: "./fireblock/fireblocks_secret.key"
           FILE_DATA: ${{ secrets.FIREBLOCK_SECRET }}
 
       - name: Deploy smart contract
