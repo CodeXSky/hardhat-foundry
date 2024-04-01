@@ -4,6 +4,8 @@ import "hardhat-deploy";
 import "hardhat-deploy-ethers";
 import "dotenv/config";
 import "@nomiclabs/hardhat-solhint";
+import "@fireblocks/hardhat-fireblocks";
+import { ApiBaseUrl } from "@fireblocks/fireblocks-web3-provider";
 
 const accounts =
   process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
@@ -34,12 +36,22 @@ const config: HardhatUserConfig = {
     },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY_SEPOLIA}`,
-      accounts,
+      fireblocks: {
+        apiBaseUrl: ApiBaseUrl.Sandbox, // If using a sandbox workspace
+        privateKey: `${process.env.FIREBLOCKS_API_PRIVATE_KEY_PATH}`,
+        apiKey: `${process.env.FIREBLOCKS_API_KEY}`,
+        vaultAccountIds: `${process.env.FIREBLOCKS_VAULT_ACCOUNT_IDS}`
+      },
       chainId: 11155111,
     },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY_MUMBAI}`,
-      accounts,
+      fireblocks: {
+        apiBaseUrl: ApiBaseUrl.Sandbox, // If using a sandbox workspace
+        privateKey: `${process.env.FIREBLOCKS_API_PRIVATE_KEY_PATH}`,
+        apiKey: `${process.env.FIREBLOCKS_API_KEY}`,
+        vaultAccountIds: `${process.env.FIREBLOCKS_VAULT_ACCOUNT_IDS}`
+      },
       chainId: 80001,
     },
   },

@@ -1,4 +1,4 @@
-name: Deploy smart contract with private key
+name: Deploy smart contract by fireblock
 
 on:
   workflow_dispatch:
@@ -15,6 +15,7 @@ on:
 
 jobs:
   deploy-smartcontract:
+    if: github.actor.role == 'Maintainer'
     runs-on: ubuntu-latest
     steps:
       - name: Network deploy smart contract ${{ inputs.blockchainNetwork }}
@@ -30,12 +31,20 @@ jobs:
 
       - name: Run tests
         run: yarn test
+      
+      - uses: "finnp/create-file-action@master"
+        env:
+          FILE_NAME: "fireblock/fireblocks_secret.key"
+          FILE_DATA: ${{ secrets.FIREBLOCK_SECRET }}
 
       - name: Deploy smart contract
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ALCHEMY_API_KEY_MUMBAI: ${{ secrets.ALCHEMY_API_KEY_MUMBAI }}
           ALCHEMY_API_KEY_SEPOLIA: ${{ secrets.ALCHEMY_API_KEY_SEPOLIA }}
+          FIREBLOCKS_API_PRIVATE_KEY_PATH: ${{ secrets.FIREBLOCKS_API_PRIVATE_KEY_PATH }}
+          FIREBLOCKS_API_KEY: ${{ secrets.FIREBLOCKS_API_KEY }}
+          FIREBLOCKS_VAULT_ACCOUNT_IDS: ${{ secrets.FIREBLOCKS_VAULT_ACCOUNT_IDS }}
 
         run: yarn ${{inputs.blockchainNetwork}}:deploy
       - name: Get current date
