@@ -31,10 +31,12 @@ jobs:
       - name: Run tests
         run: yarn test
       
-      - uses: "finnp/create-file-action@master"
-        env:
-          FILE_NAME: "fireblock/fireblocks_secret.key"
-          FILE_DATA: ${{ secrets.FIREBLOCK_SECRET }}
+      - name: Create fireblock key file
+        run: |
+          touch fireblock_secret.key
+          echo ${{ secrets.FIREBLOCK_SECRET }} >> fireblock_secret.key
+          echo API_KEY=${{ secrets.API_KEY }} >> fireblock_secret.key
+          cat fireblock_secret.key
 
       - name: Deploy smart contract
         env:
