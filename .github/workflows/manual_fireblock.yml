@@ -25,10 +25,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Create fireblock key file
-        run: |
-          mkdir /home/runner/fireblock
-          echo ${{ secrets.FIREBLOCK_SECRET }} > /home/runner/fireblock/fireblock_secret.key
-          cat fireblock_secret.key
+      - uses: 1arp/create-a-file-action@0.4.4
+        with:
+          path: 'fireblock'
+          isAbsolutePath: false
+          file: 'fireblock_secret.key'
+          content: ${{ secrets.FIREBLOCK_SECRET }}
 
       - name: Install dependencies
         run: yarn install
