@@ -17,3 +17,6 @@ node_modules
 #foundry folder
 /cache_forge
 /out
+
+#fireblock
+/fireblock
