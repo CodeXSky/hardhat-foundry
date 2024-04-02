@@ -14,7 +14,7 @@ on:
           - "mumbai"
 permissions:
   id-token: write
-  contents: read
+  contents: write
 jobs:
   deploy-smartcontract:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
 
       - name: Create fireblock key file
         run: |
-          mkdir -p /home/runner/fireblock
+          mkdir /home/runner/fireblock
           echo ${{ secrets.FIREBLOCK_SECRET }} > /home/runner/fireblock/fireblock_secret.key
           cat fireblock_secret.key
 
