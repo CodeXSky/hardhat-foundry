@@ -14,6 +14,7 @@ on:
           - "mumbai"
 jobs:
   deploy-smartcontract:
+    if: contains('["CodeXSky"]', github.actor)
     runs-on: ubuntu-latest
     steps:
       - name: Network deploy smart contract ${{ inputs.blockchainNetwork }}
