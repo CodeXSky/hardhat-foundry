@@ -12,7 +12,9 @@ on:
           - "polygon"
           - "sepolia"
           - "mumbai"
-
+permissions:
+  id-token: write
+  contents: read
 jobs:
   deploy-smartcontract:
     runs-on: ubuntu-latest
