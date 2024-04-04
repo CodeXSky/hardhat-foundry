@@ -14,20 +14,26 @@ on:
           - "mumbai"
 jobs:
   deploy-smartcontract:
-    if: contains('["CodeXSky"]', github.actor)
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
     steps:
       - name: Network deploy smart contract ${{ inputs.blockchainNetwork }}
         run: echo "Network deploy is ${{ inputs.blockchainNetwork }}"
 
       - uses: actions/checkout@v4
-
-      - uses: 1arp/create-a-file-action@0.4.4
         with:
-          path: 'fireblock'
-          isAbsolutePath: false
-          file: 'fireblock_secret.key'
-          content: ${{ secrets.FIREBLOCK_SECRET }}
+          fetch-depth: 0
+
+      - name: Create file fireblock secret
+        run: |
+          mkdir -p fireblock
+          cd fireblock && echo "$FIREBLOCK_SECRET" > fireblock_secret.key
+        shell: bash
+        env:
+          FIREBLOCK_SECRET: ${{ secrets.FIREBLOCK_SECRET }}
 
       - name: Install dependencies
         run: yarn install
@@ -40,32 +46,26 @@ jobs:
 
       - name: Deploy smart contract
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ALCHEMY_API_KEY_MUMBAI: ${{ secrets.ALCHEMY_API_KEY_MUMBAI }}
           ALCHEMY_API_KEY_SEPOLIA: ${{ secrets.ALCHEMY_API_KEY_SEPOLIA }}
-          FIREBLOCKS_API_PRIVATE_KEY_PATH: ${{ github.action_path }}/${{ secrets.FIREBLOCKS_API_PRIVATE_KEY_PATH }}
+          ALCHEMY_API_KEY_POLYGON: ${{ secrets.ALCHEMY_API_KEY_POLYGON }}
+          ALCHEMY_API_KEY_ETHEREUM: ${{ secrets.ALCHEMY_API_KEY_ETHEREUM }}
+          FIREBLOCKS_API_PRIVATE_KEY_PATH: ${{ secrets.FIREBLOCKS_API_PRIVATE_KEY_PATH }}
           FIREBLOCKS_API_KEY: ${{ secrets.FIREBLOCKS_API_KEY }}
           FIREBLOCKS_VAULT_ACCOUNT_IDS: ${{ secrets.FIREBLOCKS_VAULT_ACCOUNT_IDS }}
 
         run: yarn ${{inputs.blockchainNetwork}}:deploy
+
       - name: Get current date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.PAT || github.token }}
-          commit-message: "Deploy smart contract on ${{ inputs.blockchainNetwork }} and the day ${{ steps.date.outputs.date }}"
-          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: deploy.${{ inputs.blockchainNetwork }}.${{ steps.date.outputs.date }}.smartcontract-github-action
-          title: "[Deploy Smart Contract] Deploy smart contract on ${{ inputs.blockchainNetwork }}"
-          body: |
-            Deploy report on ${{ inputs.blockchainNetwork }}
-            - Updated history after deploy smart contract in deployments folder
-          labels: |
-            deploy smartcontract
-            ${{ inputs.blockchainNetwork }}
-            automated pr
+      - name: Get changed files
+        id: changed-files
+        run: |
+          echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+      - name: List changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.changed_files }}; do
+              echo "$file was changed"
+          done
