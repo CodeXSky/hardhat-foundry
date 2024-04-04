@@ -64,8 +64,8 @@ jobs:
         id: changed-files
         run: |
           echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
-      - name: List changed files
+      - name: Create branch if have file changed
+        if: steps.changed-files.outputs.changed_files > 0
         run: |
-          for file in ${{ steps.changed-files.outputs.changed_files }}; do
-              echo "$file was changed"
-          done
+          git checkout -b "deploy.mumbai.${{ steps.date.outputs.date }}.smart-contract"
+          echo "${{ github.event.repository.default_branch }}"
